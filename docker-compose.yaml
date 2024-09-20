@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  driver-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: driver-service:latest
+    container_name: driver-service
+    ports:
+      - "9122:9122"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://driver-service-postgres:5432/Driverdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Beulah@333
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://service-registry:8761/eureka
+    depends_on:
+      - driver-service-postgres
+    networks:
+      - atanet
+
+  driver-service-postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: Driverdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Beulah@333
+    volumes:
+      - pgdata_driver:/var/lib/postgresql/data
+    networks:
+      - atanet
+
+networks:
+  atanet:
+    driver: bridge
+
+volumes:
+  pgdata_driver:
+
